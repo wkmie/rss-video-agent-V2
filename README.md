@@ -338,6 +338,11 @@ X_BEARER_TOKEN=你的_X_BEARER_TOKEN
 
 `X Crypto Search` 默认启用；没有配置 Token 时系统会跳过 X，不影响 RSS 和 Google News RSS。程序不设置每日用量、请求间隔或费用预算限制，实际用量与费用以 X 开发者账户为准。
 
+重点账号采集位于“信息与热点 → X 消息 → 重点账号采集”。账号清单维护在
+`config/x_key_accounts.json`：进入信息与热点页面后，每个 Streamlit 会话会自动抓取一次，
+普通控件重绘不会重复请求；也可以点击“抓取最新推文”手动刷新。采集结果沿用 Web3
+热点数据库、去重和热度评分，并按 X 账号分组展示。X API 仍按实际读取量计费。
+
 配置 LunarCrush：
 
 ```bash

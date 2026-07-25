@@ -97,18 +97,12 @@ def _render_login_page() -> None:
     is_zh = language == "zh"
     left, center, right = st.columns([1, 1.35, 1])
     with center:
-        selected_language = st.selectbox(
-            "语言 / Language",
-            ["zh", "en"],
-            index=["zh", "en"].index(language),
-            format_func=lambda value: "中文" if value == "zh" else "English",
-            key="auth_language_selector",
+        st.title("Web3 内容增长工作台")
+        st.caption(
+            "登录后使用信息采集、事件选题、内容生产和数据复盘功能"
+            if is_zh
+            else "Sign in to access intelligence, topic planning, content production, and performance review"
         )
-        if selected_language != language:
-            st.session_state.language = selected_language
-            st.rerun()
-        st.title("RSS Video Agent")
-        st.caption("登录后使用消息采集、选题分析和文案生成功能" if is_zh else "Sign in to access news collection and content generation")
         login_tab, register_tab = st.tabs(["登录" if is_zh else "Sign in", "注册账号" if is_zh else "Create account"])
 
         with login_tab:

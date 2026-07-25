@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import asyncio
 import json
 from typing import Optional
 
-import httpx
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -16,15 +14,17 @@ from app.rss.models import RssArticle
 from app.rss.fetcher import fetch_all_sources
 from app.services.keyword_filter import article_query
 from app.services.scoring import recommendation_level, score_article, suggested_format, title_to_zh
+from app.services.title_translation import is_effective_chinese, needs_title_translation, translate_titles
 
 
 def article_to_dict(article: Article) -> dict:
+    title_zh = article.title_zh if is_effective_chinese(article.title_zh) else None
     return {
         "id": article.id,
         "source_name": article.source_name,
         "source_url": article.source_url,
         "title": article.title,
-        "title_zh": article.title_zh or title_to_zh(article.title, article.language),
+        "title_zh": title_zh,
         "link": article.link,
         "summary": article.summary,
         "published_at": article.published_at.isoformat() if article.published_at else None,
@@ -53,15 +53,12 @@ async def fetch_and_store(db: Session) -> dict:
         new_items.append(item)
     skipped_before_insert = updated
 
-    translations, translation_errors = await translate_new_titles(new_items)
-    errors.extend(translation_errors)
-
     for item in new_items:
         article = Article(
             source_name=item.source_name,
             source_url=item.source_url,
             title=item.title,
-            title_zh=translations.get(item.content_hash) or title_to_zh(item.title, item.language),
+            title_zh=None,
             link=item.link,
             summary=item.summary,
             published_at=item.published_at,
@@ -89,7 +86,7 @@ async def fetch_and_store(db: Session) -> dict:
                 source_name=item.source_name,
                 source_url=item.source_url,
                 title=item.title,
-                title_zh=translations.get(item.content_hash) or title_to_zh(item.title, item.language),
+                title_zh=None,
                 link=item.link,
                 summary=item.summary,
                 published_at=item.published_at,
@@ -110,44 +107,6 @@ async def fetch_and_store(db: Session) -> dict:
     return {"fetched": len(rss_articles), "created": created, "duplicates": updated, "errors": errors}
 
 
-async def translate_new_titles(items: list[RssArticle]) -> tuple[dict[str, str], list[str]]:
-    targets = [item for item in items if item.language != "zh" and item.title]
-    if not targets:
-        return {}, []
-
-    translations: dict[str, str] = {}
-    semaphore = asyncio.Semaphore(8)
-
-    async def translate_one(client: httpx.AsyncClient, item: RssArticle) -> None:
-        async with semaphore:
-            try:
-                response = await client.get(
-                    "https://translate.googleapis.com/translate_a/single",
-                    params={
-                        "client": "gtx",
-                        "sl": "auto",
-                        "tl": "zh-CN",
-                        "dt": "t",
-                        "q": item.title,
-                    },
-                )
-                response.raise_for_status()
-                data = response.json()
-                title_zh = "".join(part[0] for part in data[0] if part and part[0]).strip()
-                if title_zh:
-                    translations[item.content_hash] = title_zh
-            except Exception:
-                return
-
-    async with httpx.AsyncClient(timeout=4, headers={"User-Agent": "rss-video-agent/0.1"}) as client:
-        tasks = [translate_one(client, item) for item in targets]
-        try:
-            await asyncio.wait_for(asyncio.gather(*tasks), timeout=10)
-        except asyncio.TimeoutError:
-            pass
-    return translations, []
-
-
 def list_articles(
     db: Session,
     category: Optional[str] = None,
@@ -158,9 +117,21 @@ def list_articles(
     return [article_to_dict(article) for article in article_query(db, category, keyword, time_range, limit)]
 
 
+async def list_articles_translated(
+    db: Session,
+    category: Optional[str] = None,
+    keyword: Optional[str] = None,
+    time_range: Optional[str] = None,
+    limit: int = 50,
+) -> list[dict]:
+    articles = article_query(db, category, keyword, time_range, limit)
+    await ensure_articles_translated(db, articles)
+    return [article_to_dict(article) for article in articles if is_effective_chinese(article.title_zh or article.title)]
+
+
 def fallback_analysis(article: Article) -> dict:
     score, detail = score_article(article)
-    title_zh = title_to_zh(article.title, article.language)
+    title_zh = article.title_zh if is_effective_chinese(article.title_zh) else title_to_zh(article.title, article.language)
     angle = "用普通人视角解释这件事会影响谁、改变什么、哪里有争议。"
     return {
         "title_zh": title_zh,
@@ -231,3 +202,38 @@ async def analyze_article(db: Session, article_id: int, use_llm: bool = True) ->
 def top_topic_pool(db: Session, category: Optional[str], keyword: Optional[str], time_range: Optional[str], limit: int = 10) -> list[dict]:
     articles = article_query(db, category, keyword, time_range, limit)
     return [article_to_dict(article) for article in articles[:limit]]
+
+
+async def top_topic_pool_translated(
+    db: Session,
+    category: Optional[str],
+    keyword: Optional[str],
+    time_range: Optional[str],
+    limit: int = 10,
+) -> list[dict]:
+    articles = article_query(db, category, keyword, time_range, limit)
+    await ensure_articles_translated(db, articles)
+    return [
+        article_to_dict(article)
+        for article in articles[:limit]
+        if is_effective_chinese(article.title_zh or article.title)
+    ]
+
+
+async def ensure_articles_translated(db: Session, articles: list[Article]) -> None:
+    targets = [
+        article
+        for article in articles
+        if needs_title_translation(article.title, article.title_zh)
+    ]
+    if not targets:
+        return
+    translations, _ = await translate_titles(targets)
+    changed = False
+    for article in targets:
+        translated = translations.get(article.content_hash)
+        if translated:
+            article.title_zh = translated
+            changed = True
+    if changed:
+        db.commit()

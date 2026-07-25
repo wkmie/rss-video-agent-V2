@@ -122,6 +122,15 @@
       "poll_interval_seconds": 120
     },
     {
+      "name": "X Key Accounts",
+      "type": "x_key_accounts",
+      "enabled": true,
+      "priority": "P1",
+      "requires_api_key": true,
+      "api_key_env": "X_BEARER_TOKEN",
+      "poll_interval_seconds": 120
+    },
+    {
       "name": "LunarCrush",
       "type": "lunarcrush",
       "enabled": false,

@@ -65,4 +65,4 @@ def title_to_zh(title: str, language: str) -> str:
     if language == "zh":
         return title
     text = re.sub(r"\s*[-|]\s*[^-|]+$", "", title).strip()
-    return f"中文解读：{text}"
+    return text

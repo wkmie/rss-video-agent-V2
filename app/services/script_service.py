@@ -7,6 +7,7 @@ from app.db.models import Article, ScriptGeneration
 from app.llm.client import LLMClient
 from app.llm.prompts import CUSTOM_ONLY_SCRIPT_PROMPT, VIDEO_SCRIPT_PROMPT
 from app.services.scoring import title_to_zh
+from app.services.title_translation import is_effective_chinese
 
 
 WORD_TARGETS = {
@@ -95,7 +96,7 @@ async def generate_from_article(
     article = db.get(Article, article_id)
     if not article:
         raise ValueError("Article not found")
-    topic = title_to_zh(article.title, article.language)
+    topic = article.title_zh if is_effective_chinese(article.title_zh) else title_to_zh(article.title, article.language)
     text = await generate_text(
         topic=topic,
         platform=platform,

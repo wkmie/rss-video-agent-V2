@@ -1,0 +1,55 @@
+{
+  "accounts": [
+    {"username": "blknoiz06", "display_name": "Ansem", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "0xVonGogh", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "973Meech", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "Poe_Ether", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "artschOOlreject", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "thesextheoffender", "display_name": "", "region": "全球", "priority": "P1", "enabled": false, "validation_error": "用户名超过 X 的 15 字符限制"},
+    {"username": "arrogantfrfr", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "JamesWynnReal", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "a1lon9", "display_name": "Pump.fun 创始人", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "slumpforapump69", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "HenokCrypto", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "MemecoinWolf", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "fomomofosol", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "loshmi", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+    {"username": "TeddyxROO", "display_name": "", "region": "全球", "priority": "P1", "enabled": true},
+
+    {"username": "CryptoKoreann", "display_name": "", "region": "韩国", "priority": "P2", "enabled": true},
+    {"username": "Solana_Korea", "display_name": "", "region": "韩国", "priority": "P2", "enabled": true},
+    {"username": "MemeKing_KR", "display_name": "", "region": "韩国", "priority": "P2", "enabled": true},
+    {"username": "WIF_Korea", "display_name": "", "region": "韩国", "priority": "P2", "enabled": true},
+    {"username": "Bonk_KR", "display_name": "", "region": "韩国", "priority": "P2", "enabled": true},
+
+    {"username": "MemeJapanCrypto", "display_name": "", "region": "日本", "priority": "P2", "enabled": true},
+    {"username": "SolMeme_JP", "display_name": "", "region": "日本", "priority": "P2", "enabled": true},
+    {"username": "PEPE_Japan", "display_name": "", "region": "日本", "priority": "P2", "enabled": true},
+    {"username": "CryptoNinjaJP", "display_name": "", "region": "日本", "priority": "P2", "enabled": true},
+    {"username": "WAGMI_Japan", "display_name": "", "region": "日本", "priority": "P2", "enabled": true},
+
+    {"username": "VietMemeCoin", "display_name": "", "region": "越南", "priority": "P2", "enabled": true},
+    {"username": "SolanaVietnam", "display_name": "", "region": "越南", "priority": "P2", "enabled": true},
+    {"username": "VN_Memecoin", "display_name": "", "region": "越南", "priority": "P2", "enabled": true},
+    {"username": "CryptoViet", "display_name": "", "region": "越南", "priority": "P2", "enabled": true},
+    {"username": "MemeVN_Hunter", "display_name": "", "region": "越南", "priority": "P2", "enabled": true},
+
+    {"username": "ThaiMemeKing", "display_name": "", "region": "泰国", "priority": "P2", "enabled": true},
+    {"username": "BangkokDegens", "display_name": "", "region": "泰国", "priority": "P2", "enabled": true},
+    {"username": "Solana_Thailand", "display_name": "", "region": "泰国", "priority": "P2", "enabled": true},
+    {"username": "MemeThai", "display_name": "", "region": "泰国", "priority": "P2", "enabled": true},
+    {"username": "TH_CryptoAlpha", "display_name": "", "region": "泰国", "priority": "P2", "enabled": true},
+
+    {"username": "IndianMemeLord", "display_name": "", "region": "印度", "priority": "P2", "enabled": true},
+    {"username": "IndMemeHunter", "display_name": "", "region": "印度", "priority": "P2", "enabled": true},
+    {"username": "CryptoIndiaMemes", "display_name": "", "region": "印度", "priority": "P2", "enabled": false, "validation_error": "用户名超过 X 的 15 字符限制"},
+    {"username": "MemeCoinIndia", "display_name": "", "region": "印度", "priority": "P2", "enabled": true},
+    {"username": "DesiDegens", "display_name": "", "region": "印度", "priority": "P2", "enabled": true},
+
+    {"username": "SingaporeWhales", "display_name": "", "region": "其他亚洲/新兴地区", "priority": "P2", "enabled": true},
+    {"username": "MalaysiaMeme", "display_name": "", "region": "其他亚洲/新兴地区", "priority": "P2", "enabled": true},
+    {"username": "IndoCryptoMemes", "display_name": "印尼", "region": "其他亚洲/新兴地区", "priority": "P2", "enabled": true},
+    {"username": "PH_Memecoin", "display_name": "菲律宾", "region": "其他亚洲/新兴地区", "priority": "P2", "enabled": true},
+    {"username": "SEA_MemeAlpha", "display_name": "东南亚", "region": "其他亚洲/新兴地区", "priority": "P2", "enabled": true}
+  ]
+}

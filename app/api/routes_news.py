@@ -7,7 +7,12 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.services.news_service import analyze_article, fetch_and_store, list_articles, top_topic_pool
+from app.services.news_service import (
+    analyze_article,
+    fetch_and_store,
+    list_articles_translated,
+    top_topic_pool_translated,
+)
 
 
 router = APIRouter(prefix="/api/news", tags=["news"])
@@ -24,25 +29,41 @@ async def fetch_news(db: Session = Depends(get_db)):
 
 
 @router.get("/list")
-def get_news(
+async def get_news(
     category: Optional[str] = Query(default=None),
     keyword: Optional[str] = Query(default=None),
     time_range: Optional[str] = Query(default=None),
     limit: int = Query(default=50, ge=1, le=200),
     db: Session = Depends(get_db),
 ):
-    return {"items": list_articles(db, category=category, keyword=keyword, time_range=time_range, limit=limit)}
+    return {
+        "items": await list_articles_translated(
+            db,
+            category=category,
+            keyword=keyword,
+            time_range=time_range,
+            limit=limit,
+        )
+    }
 
 
 @router.get("/topics")
-def get_topics(
+async def get_topics(
     category: Optional[str] = Query(default=None),
     keyword: Optional[str] = Query(default=None),
     time_range: Optional[str] = Query(default=None),
     limit: int = Query(default=10, ge=1, le=20),
     db: Session = Depends(get_db),
 ):
-    return {"items": top_topic_pool(db, category, keyword, time_range, limit)}
+    return {
+        "items": await top_topic_pool_translated(
+            db,
+            category,
+            keyword,
+            time_range,
+            limit,
+        )
+    }
 
 
 @router.post("/analyze")
